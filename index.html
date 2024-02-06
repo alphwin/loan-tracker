@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Loan Tracker</h1>
+        <a href="list_loans.php" class="button">View All Loans</a>
+    </header>
+    <main>
+      <form id="add-loan-form" action="add_loan.php" method="POST" >
+          <label for="borrower_name">Borrower Name:</label>
+          <input type="text" id="borrower_name" name="borrower_name" required>
+          <label for="borrowed_amount">Borrowed Amount:</label>
+          <input type="number" id="borrowed_amount" name="borrowed_amount" step="0.01" required>
+          <button type="submit">Add Loan</button>
+      </form>
+
+      <h2>Search Borrower:</h2>
+      <input type="text" id="search-bar">
+      <div id="search-results"></div>
+    </main>
+    <footer>
+    </footer>
+    <script>
+        document.getElementById("add-loan-form").addEventListener("submit", function(event) {
+          event.preventDefault(); // Prevent default form submission
+        
+          const borrowerName = document.getElementById("borrower_name").value;
+          const borrowedAmount = document.getElementById("borrowed_amount").value;
+        
+          // Validate user input (implement your own validation)
+        
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "add_loan.php");
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+          xhr.onload = function() {
+            if (xhr.status === 200) {
+              window.location.reload();
+              // Success: Update the table and display a message
+              console.log(xhr.responseText); // Log the response message
+        
+              // Update the table with the new loan information (implement your own function)
+              updateLoanTable(borrowerName, borrowedAmount); // Replace with your function call
+        
+              // Clear the form fields
+              document.getElementById("borrower_name").value = "";
+              document.getElementById("borrowed_amount").value = "";
+            } else {
+              // Error: Display an error message
+              console.error("Error adding loan:", xhr.responseText);
+              // Handle the error appropriately (e.g., display a user-friendly message)
+            }
+          };
+        
+          xhr.send("borrower_name=" + encodeURIComponent(borrowerName) + "&borrowed_amount=" + encodeURIComponent(borrowedAmount));
+        });
+        document.getElementById("search-bar").addEventListener("keyup", function(event) {
+        if (event.key === "Enter") {
+        const searchTerm = this.value;
+
+          // Redirect to search_browser.php with the search term
+          window.location.href = "search_browser.php?search=" + encodeURIComponent(searchTerm);
+        }
+    });
+    </script>              
+</body>
+</html>
